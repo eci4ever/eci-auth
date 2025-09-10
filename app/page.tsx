@@ -1,3 +1,4 @@
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -11,10 +12,10 @@ export default function Home() {
           </p>
           <div className="flex justify-center space-x-4">
             <button className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
-              <a href="/login"> Primary Action </a>
+              <Link href={"/login"}> Login / Signup </Link>
             </button>
             <button className="px-6 py-3 border border-border text-foreground rounded-lg hover:bg-accent/10 transition-colors">
-              <a href="/dashboard"> Secondary Action </a>
+              <Link href={"/dashboard"}> Secondary Action </Link>
             </button>
           </div>
         </div>

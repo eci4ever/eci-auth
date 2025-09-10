@@ -13,6 +13,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import Link from "next/link"
 
 export default function Page() {
   return (
@@ -39,6 +40,10 @@ export default function Page() {
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
+          </div>
+          <div className="ml-auto flex items-end gap-4 px-8">
+            {/* Placeholder for right-aligned content */}
+            <Link href={"/"}> Home </Link>
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
