@@ -18,8 +18,10 @@ import Link from "next/link"
 import { useState, useEffect } from "react";
 // import { signOut } from '@/lib/auth'
 import { getCurrentUser } from "@/lib/actions"
-import { UserSafe } from "@/types/user"
 import { signOutAction } from "@/lib/actions"
+import type { User } from "@prisma/client"
+
+type UserSafe = Omit<User, "password">;
 
 
 
