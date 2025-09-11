@@ -71,7 +71,6 @@ export async function getCurrentUser() {
     if (user) {
       return { ...user, roles, permissions };
     }
-    console.log(user);
     return user;
   } catch (error) {
     console.error("Failed to get current user:", error);
