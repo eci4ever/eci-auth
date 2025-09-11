@@ -1,3 +1,4 @@
+"use client"
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -14,8 +15,40 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
+import { useState, useEffect } from "react";
+// import { signOut } from '@/lib/auth'
+import { getCurrentUser } from "@/lib/actions"
+import { UserSafe } from "@/types/user"
+import { signOutAction } from "@/lib/actions"
+
+
 
 export default function Page() {
+  const [user, setUser] = useState<UserSafe | null>(null);
+
+  useEffect(() => {
+    async function fetchUser() {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+    }
+    fetchUser();
+  }, []);
+
+  if (!user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  const handleSignOut = async () => {
+    try {
+      await signOutAction();
+    } catch (error) {
+      console.error("Sign out error:", error);
+    }
+  };
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -43,8 +76,14 @@ export default function Page() {
           </div>
           <div className="ml-auto flex items-end gap-4 px-8">
             {/* Placeholder for right-aligned content */}
-            <Link href={"/"}> Home </Link>
+            <Link href={"/"}> Home {user.name}</Link>
           </div>
+          <button
+            onClick={handleSignOut}
+            className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
+          >
+            <div className="hidden md:block">Sign Out</div>
+          </button>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
