@@ -16,22 +16,23 @@ import {
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 import { useState, useEffect } from "react";
-// import { signOut } from '@/lib/auth'
 import { getCurrentUser } from "@/lib/actions"
 import { signOutAction } from "@/lib/actions"
 import type { User } from "@prisma/client"
+import { hasRole, hasPermission } from "@/lib/helpers"
 
-type UserSafe = Omit<User, "password">;
-
-
+export type UserSafe = Omit<User, "password"> & {
+  roles: string[];
+  permissions: string[];
+};
 
 export default function Page() {
   const [user, setUser] = useState<UserSafe | null>(null);
 
   useEffect(() => {
     async function fetchUser() {
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
+      const user = await getCurrentUser();
+      setUser(user);
     }
     fetchUser();
   }, []);
@@ -51,6 +52,7 @@ export default function Page() {
       console.error("Sign out error:", error);
     }
   };
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -78,7 +80,17 @@ export default function Page() {
           </div>
           <div className="ml-auto flex items-end gap-4 px-8">
             {/* Placeholder for right-aligned content */}
-            <Link href={"/"}> Home {user.name}</Link>
+            <Link href={"/"}> Home <span className="text-xl text-blue-500">{user.name}</span></Link>
+          </div>
+          <div>
+            {hasRole(user.roles, "admin") && (
+              <Link href="/admin">Roles</Link>
+            )}
+          </div>
+          <div>
+            {hasPermission(user.permissions, "create_user") && (
+              <Link href="/admin">Permissions</Link>
+            )}
           </div>
           <button
             onClick={handleSignOut}

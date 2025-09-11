@@ -64,9 +64,47 @@ export async function getCurrentUser() {
       },
     });
 
+    const { roles, permissions } = await getUserRolesAndPermissions(
+      user?.id as string
+    );
+
+    if (user) {
+      return { ...user, roles, permissions };
+    }
+    console.log(user);
     return user;
   } catch (error) {
     console.error("Failed to get current user:", error);
     return null;
   }
+}
+
+export async function getUserRolesAndPermissions(id: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: id },
+    include: {
+      roles: {
+        include: {
+          role: {
+            include: {
+              permissions: {
+                include: {
+                  permission: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!user) return { roles: [], permissions: [] };
+
+  const roles = user.roles.map((r) => r.role.name);
+  const permissions = user.roles.flatMap((r) =>
+    r.role.permissions.map((p) => p.permission.name)
+  );
+
+  return { roles, permissions };
 }
