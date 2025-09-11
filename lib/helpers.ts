@@ -1,68 +1,64 @@
-export function hasRole(
-  userRoles: string[] | undefined,
-  role: string
-): boolean {
-  if (!userRoles) return false;
-  return userRoles.includes(role);
+import { UserSafe } from "@/app/dashboard/user-context";
+
+// check single
+export function hasRole(user: UserSafe, role: string) {
+  return user?.roles?.includes(role) ?? false;
 }
 
-export function hasPermission(
-  userPermissions: string[] | undefined,
-  permission: string
-): boolean {
-  if (!userPermissions) return false;
-  return userPermissions.includes(permission);
+export function hasPermission(user: UserSafe, permission: string) {
+  return user?.permissions?.includes(permission) ?? false;
 }
 
+// check multiple (any)
+export function hasAnyRole(user: UserSafe, roles: string[]) {
+  return roles.some((role) => user?.roles?.includes(role));
+}
+
+export function hasAnyPermission(user: UserSafe, permissions: string[]) {
+  return permissions.some((p) => user?.permissions?.includes(p));
+}
+
+// check multiple (all) → kalau nak
+export function hasAllRoles(user: UserSafe, roles: string[]) {
+  return roles.every((role) => user?.roles?.includes(role));
+}
+
+export function hasAllPermissions(user: UserSafe, permissions: string[]) {
+  return permissions.every((p) => user?.permissions?.includes(p));
+}
+
+/**
+ * canAccess
+ * @param user user object
+ * @param options roles | permissions | mode
+ * mode: "any" (default) | "all"
+ */
 export function canAccess(
-  userRoles: string[] | undefined,
-  userPermissions: string[] | undefined,
-  requiredRoles: string[] = [],
-  requiredPermissions: string[] = []
+  user: UserSafe | null | undefined,
+  options: {
+    roles?: string[];
+    permissions?: string[];
+    mode?: "any" | "all";
+  }
 ): boolean {
-  if (requiredRoles.length === 0 && requiredPermissions.length === 0) {
-    return true; // No specific roles or permissions required
+  if (!user) return false;
+
+  const { roles = [], permissions = [], mode = "any" } = options;
+
+  let roleCheck = true;
+  let permCheck = true;
+
+  if (roles.length > 0) {
+    roleCheck =
+      mode === "all" ? hasAllRoles(user, roles) : hasAnyRole(user, roles);
   }
 
-  const hasRequiredRole = requiredRoles.some((role) =>
-    hasRole(userRoles, role)
-  );
-  const hasRequiredPermission = requiredPermissions.some((permission) =>
-    hasPermission(userPermissions, permission)
-  );
-
-  return hasRequiredRole || hasRequiredPermission;
-}
-
-export function hasAnyRole(
-  userRoles: string[] | undefined,
-  roles: string[]
-): boolean {
-  if (!userRoles) return false;
-  return roles.some((r) => userRoles.includes(r));
-}
-export function hasAnyPermission(
-  userPermissions: string[] | undefined,
-  permissions: string[]
-): boolean {
-  if (!userPermissions) return false;
-  return permissions.some((p) => userPermissions.includes(p));
-}
-export function canAccessAny(
-  userRoles: string[] | undefined,
-  userPermissions: string[] | undefined,
-  requiredRoles: string[] = [],
-  requiredPermissions: string[] = []
-): boolean {
-  if (requiredRoles.length === 0 && requiredPermissions.length === 0) {
-    return true; // No specific roles or permissions required
+  if (permissions.length > 0) {
+    permCheck =
+      mode === "all"
+        ? hasAllPermissions(user, permissions)
+        : hasAnyPermission(user, permissions);
   }
 
-  const hasRequiredRole = hasAnyRole(userRoles, requiredRoles);
-  const hasRequiredPermission = hasAnyPermission(
-    userPermissions,
-    requiredPermissions
-  );
-
-  return hasRequiredRole || hasRequiredPermission;
+  return roleCheck && permCheck;
 }
