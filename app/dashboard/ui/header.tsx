@@ -1,9 +1,8 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import BreadcrumbBar from "./breadcrumb";
 import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
-import { hasPermission, hasRole } from "@/lib/helpers";
-import { getCurrentUser, signOutAction } from "@/lib/actions";
+// import { hasPermission, hasRole } from "@/lib/helpers";
+import { getCurrentUser } from "@/lib/actions";
 import { useEffect, useState } from "react";
 import { User } from "@prisma/client";
 
@@ -31,15 +30,6 @@ export default function HeaderBar() {
             </div>
         );
     }
-
-    const handleSignOut = async () => {
-        try {
-            await signOutAction();
-        } catch (error) {
-            console.error("Sign out error:", error);
-        }
-    };
-
     return (
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
             <div className="flex items-center gap-2 px-4">
@@ -51,10 +41,9 @@ export default function HeaderBar() {
                 <BreadcrumbBar />
             </div>
             <div className="ml-auto flex items-end gap-4 px-8">
-                {/* Placeholder for right-aligned content */}
-                <Link href={"/"}> Home <span className="text-xl text-blue-500">{user.name}</span></Link>
+                <span className="text-foreground font-normal">Welcome {user.name} !</span>
             </div>
-            <div>
+            {/* <div>
                 {hasRole(user.roles, "admin") && (
                     <Link href="/admin">Roles</Link>
                 )}
@@ -63,13 +52,7 @@ export default function HeaderBar() {
                 {hasPermission(user.permissions, "create_user") && (
                     <Link href="/admin">Permissions</Link>
                 )}
-            </div>
-            <button
-                onClick={handleSignOut}
-                className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
-            >
-                <div className="hidden md:block">Sign Out</div>
-            </button>
+            </div> */}
         </header>
     )
 }
