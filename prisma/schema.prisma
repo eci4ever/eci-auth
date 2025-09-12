@@ -1,27 +1,28 @@
-// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql" // atau mysql/sqlite ikut setup Eci
+  provider = "postgresql" // atau mysql/sqlite
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id       String     @id @default(cuid())
-  email    String     @unique
-  name     String
-  password String
-
-  roles    UserRole[] // many-to-many dengan Role
+  id       String   @id @default(cuid())
+  email    String   @unique
+  name     String?
+  password String?
+  emailVerified DateTime?
+  image         String?
+  roles    UserRole[]
+  sessions Session[]
+  accounts Account[]
 }
 
 model Role {
   id          String           @id @default(cuid())
   name        String           @unique
   description String?
-
   users       UserRole[]
   permissions RolePermission[]
 }
@@ -30,28 +31,61 @@ model Permission {
   id          String           @id @default(cuid())
   name        String           @unique
   description String?
-
   roles       RolePermission[]
 }
 
 model UserRole {
   id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
   userId String
+  role   Role   @relation(fields: [roleId], references: [id])
   roleId String
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, roleId])
+  @@unique([userId, roleId]) // 🔑 penting untuk upsert
 }
 
 model RolePermission {
-  id           String @id @default(cuid())
+  id           String      @id @default(cuid())
+  role         Role        @relation(fields: [roleId], references: [id])
   roleId       String
+  permission   Permission  @relation(fields: [permissionId], references: [id])
   permissionId String
 
-  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  @@unique([roleId, permissionId]) // 🔑 penting untuk upsert
+}
 
-  @@unique([roleId, permissionId])
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }

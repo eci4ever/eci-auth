@@ -65,7 +65,7 @@ export async function getCurrentUser() {
     });
 
     const { roles, permissions } = await getUserRolesAndPermissions(
-      user?.id as string
+      user?.email as string
     );
 
     if (user) {
@@ -78,9 +78,9 @@ export async function getCurrentUser() {
   }
 }
 
-export async function getUserRolesAndPermissions(id: string) {
+export async function getUserRolesAndPermissions(email: string) {
   const user = await prisma.user.findUnique({
-    where: { id: id },
+    where: { email: email },
     include: {
       roles: {
         include: {

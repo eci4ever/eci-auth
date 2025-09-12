@@ -1,10 +1,12 @@
 import NextAuth from "next-auth";
+import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { User as PrismaUser } from "@prisma/client";
 import { authConfig } from "../auth.config";
 import { PrismaClient } from "@prisma/client";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import { getUserRolesAndPermissions } from "./actions";
 
 const prisma = new PrismaClient();
@@ -23,8 +25,9 @@ async function getUser(email: string): Promise<PrismaUser | null> {
   }
 }
 
-export const { auth, signIn, signOut } = NextAuth({
+export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
+  adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({
       async authorize(credentials) {
@@ -55,6 +58,10 @@ export const { auth, signIn, signOut } = NextAuth({
         console.log("Invalid credentials");
         return null;
       },
+    }),
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
   session: {

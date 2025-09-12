@@ -22,8 +22,8 @@ export default function Page() {
       <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
         My Permissions :
         <ul>
-          {user?.permissions.map((key, perm) => (
-            <li>{key} {perm} </li>
+          {user?.permissions.map((perm) => (
+            <li key={perm}>{perm} </li>
           ))}
         </ul>
       </div>
