@@ -44,6 +44,11 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
             user.id
           );
 
+          if (!user.password) {
+            console.log("User has no password set");
+            return null;
+          }
+
           const passwordsMatch = await bcrypt.compare(password, user.password);
           if (passwordsMatch)
             return {
