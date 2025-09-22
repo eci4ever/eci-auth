@@ -9,14 +9,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { Eye, EyeOff, AlertCircle } from "lucide-react"
 import { signInAction } from "@/lib/auth-actions"
+import { signIn } from "next-auth/react";
 
 export function SignInForm() {
     const [showPassword, setShowPassword] = useState(false)
     const [state, formAction, isPending] = useActionState(signInAction, {}, undefined)
 
-    const handleGoogleSignIn = () => {
+    const handleGoogleSignIn = async () => {
         // Handle Google OAuth here
-        console.log("Google sign in clicked")
+        // console.log("Google sign in clicked")
+        await signIn("google", { callbackUrl: "/dashboard" })
     }
 
     return (

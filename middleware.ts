@@ -7,9 +7,8 @@ export function middleware(req: NextRequest) {
 
   // Check cookie token (dari NextAuth / custom auth)
   const token =
-    req.cookies.get("next-auth.session-token")?.value ||
+    req.cookies.get("authjs.session-token")?.value ||
     req.cookies.get("__Secure-next-auth.session-token")?.value;
-
   // Protect /dashboard routes
   if (!token && pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/signin", req.url));
