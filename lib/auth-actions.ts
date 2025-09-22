@@ -1,10 +1,8 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { signUpSchema, signInSchema } from "./validations";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/prisma";
-import { sign } from "crypto";
 import { signIn } from "@/auth";
 
 export interface AuthState {
@@ -72,7 +70,7 @@ export async function signInAction(
     });
     return { success: "Signed in successfully!" };
   } catch (error) {
-    console.log("Sign in error:");
+    console.log("Sign in error:", error);
     return {
       error: "An error occurred during sign in",
       formData: { email, password },
