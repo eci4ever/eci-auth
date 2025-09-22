@@ -141,7 +141,7 @@ export function SignUpForm() {
                             </div>
                         </div>
 
-                        <Button type="submit" className="w-full">
+                        <Button type="submit" className="w-full" disabled={isPending} aria-disabled={isPending}>
                             Create Account
                         </Button>
                     </form>
