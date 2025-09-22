@@ -18,7 +18,7 @@ export function SignInForm() {
     const handleGoogleSignIn = async () => {
         // Handle Google OAuth here
         // console.log("Google sign in clicked")
-        await signIn("google", { callbackUrl: "/dashboard" })
+        await signIn("google", { callbackUrl: process.env.AUTH_SIGNIN_REDIRECT_URL });
     }
 
     return (
