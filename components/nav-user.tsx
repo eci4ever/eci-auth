@@ -44,7 +44,7 @@ export function NavUser({
 
   const handleSignOut = async () => {
     // Handle sign out logic here
-    await signOut({ callbackUrl: process.env.AUTH_SIGNOUT_REDIRECT_URL });
+    await signOut({ callbackUrl: "/" });
     console.log("Sign out clicked")
   }
 
