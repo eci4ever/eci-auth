@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useActionState, useEffect } from "react"
-import { useRouter } from "next/navigation";
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,8 +12,6 @@ import { signInAction } from "@/lib/auth-actions"
 import { signIn } from "next-auth/react";
 
 export function SignInForm() {
-    const router = useRouter();
-    const callbackUrl = "/dashboard"; // Redirect here after successful sign-in
     const [showPassword, setShowPassword] = useState(false)
     const [state, formAction, isPending] = useActionState(signInAction, {}, undefined)
 
@@ -22,12 +19,12 @@ export function SignInForm() {
     useEffect(() => {
         if (state.success) {
             const timer = setTimeout(() => {
-                router.push(callbackUrl);
+                window.location.href = "/dashboard"
             }, 1500); // tunggu 1.5s sebelum redirect
 
             return () => clearTimeout(timer);
         }
-    }, [state.success, router, callbackUrl]);
+    }, [state.success]);
 
     const handleGoogleSignIn = async () => {
         // Handle Google OAuth here
