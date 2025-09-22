@@ -1,27 +1,23 @@
 // middleware.ts
-import { auth } from "@/auth";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export default auth((req) => {
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Public routes
-  if (pathname.startsWith("/auth") || pathname.startsWith("/api/auth")) {
-    return NextResponse.next();
-  }
+  // Check cookie token (dari NextAuth / custom auth)
+  const token =
+    req.cookies.get("next-auth.session-token")?.value ||
+    req.cookies.get("__Secure-next-auth.session-token")?.value;
 
-  // Check auth untuk protected routes
-  if (!req.auth) {
-    const signInUrl = new URL("/signin", req.url);
-    signInUrl.searchParams.set("callbackUrl", req.url);
-    return NextResponse.redirect(signInUrl);
+  // Protect /dashboard routes
+  if (!token && pathname.startsWith("/dashboard")) {
+    return NextResponse.redirect(new URL("/signin", req.url));
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ["/dashboard/:path*"], // Apply hanya untuk /dashboard
 };
