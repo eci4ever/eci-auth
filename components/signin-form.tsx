@@ -1,19 +1,33 @@
 "use client"
 
-import { useState, useActionState } from "react"
+import { useState, useActionState, useEffect } from "react"
+import { useRouter } from "next/navigation";
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Eye, EyeOff, AlertCircle } from "lucide-react"
+import { Eye, EyeOff, AlertCircle, CheckCircle, Loader2 } from "lucide-react"
 import { signInAction } from "@/lib/auth-actions"
 import { signIn } from "next-auth/react";
 
 export function SignInForm() {
+    const router = useRouter();
+    const callbackUrl = "/dashboard"; // Redirect here after successful sign-in
     const [showPassword, setShowPassword] = useState(false)
     const [state, formAction, isPending] = useActionState(signInAction, {}, undefined)
+
+
+    useEffect(() => {
+        if (state.success) {
+            const timer = setTimeout(() => {
+                router.push(callbackUrl);
+            }, 1500); // tunggu 1.5s sebelum redirect
+
+            return () => clearTimeout(timer);
+        }
+    }, [state.success, router, callbackUrl]);
 
     const handleGoogleSignIn = async () => {
         // Handle Google OAuth here
@@ -80,6 +94,16 @@ export function SignInForm() {
                         </div>
                     )}
 
+                    {state.success && (
+                        <div className="flex items-center gap-2 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">
+                            <CheckCircle className="h-4 w-4" />
+                            <span>{state.success}</span>
+
+                            {/* Spinner animate */}
+                            <Loader2 className="ml-2 h-4 w-4 animate-spin text-green-600" />
+                        </div>
+                    )}
+
                     <form action={formAction} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="email">Email Address</Label>
@@ -91,6 +115,7 @@ export function SignInForm() {
                                 required
                                 className="bg-input"
                                 defaultValue={state.formData?.email || ""}
+                                disabled={isPending} aria-disabled={isPending}
                             />
                         </div>
 
@@ -110,6 +135,7 @@ export function SignInForm() {
                                     required
                                     className="bg-input pr-10"
                                     defaultValue={state.formData?.password || ""}
+                                    disabled={isPending} aria-disabled={isPending}
                                 />
                                 <Button
                                     type="button"

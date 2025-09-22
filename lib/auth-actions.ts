@@ -1,6 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { signUpSchema, signInSchema } from "./validations";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/prisma";
+import { sign } from "crypto";
+import { signIn } from "@/auth";
 
 export interface AuthState {
   error?: string;
@@ -19,44 +24,55 @@ export async function signInAction(
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  // Basic validation
-  if (!email || !password) {
+  const parsedData = signInSchema.safeParse({ email, password });
+
+  if (!parsedData.success) {
+    const firstError = parsedData.error.issues[0];
     return {
-      error: "Email and password are required",
+      error: firstError.message,
       formData: { email, password },
     };
   }
 
-  if (!email.includes("@")) {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email.toLowerCase().trim(), // case insensitive
+    },
+    select: {
+      id: true, // hanya select id untuk efficiency
+      email: true,
+      password: true,
+    },
+  });
+
+  if (!user || !user.email) {
     return {
-      error: "Please enter a valid email address",
+      error: "No account found with this email",
       formData: { email, password },
     };
   }
 
-  if (password.length < 6) {
+  const isPasswordValid = await bcrypt.compare(
+    password as string,
+    user.password as string
+  );
+
+  if (!isPasswordValid) {
     return {
-      error: "Password must be at least 6 characters",
+      error: "Invalid password",
       formData: { email, password },
     };
   }
 
   try {
-    // TODO: Implement actual authentication logic here
-    // For now, simulate authentication
-    console.log("Sign in attempt:", { email, password });
-
-    // Simulate success - replace with actual auth logic
-    if (email === "test@example.com" && password === "password") {
-      redirect("/dashboard");
-    } else {
-      return {
-        error: "Invalid email or password",
-        formData: { email, password },
-      };
-    }
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+    return { success: "Signed in successfully!" };
   } catch (error) {
-    console.error("Sign in error:", error);
+    console.log("Sign in error:");
     return {
       error: "An error occurred during sign in",
       formData: { email, password },
@@ -72,41 +88,40 @@ export async function signUpAction(
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  // Basic validation
-  if (!name || !email || !password) {
+  const parsedData = signUpSchema.safeParse({ name, email, password });
+
+  if (!parsedData.success) {
+    const firstError = parsedData.error.issues[0];
     return {
-      error: "All fields are required",
+      error: firstError.message,
       formData: { name, email, password },
     };
   }
-
-  if (!email.includes("@")) {
+  // Check if user already exists
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email.toLowerCase().trim(), // case insensitive
+    },
+    select: {
+      id: true, // hanya select id untuk efficiency
+    },
+  });
+  if (user) {
     return {
-      error: "Please enter a valid email address",
-      formData: { name, email, password },
-    };
-  }
-
-  if (password.length < 6) {
-    return {
-      error: "Password must be at least 6 characters",
-      formData: { name, email, password },
-    };
-  }
-
-  if (name.length < 2) {
-    return {
-      error: "Name must be at least 2 characters",
+      error: "Email is already registered",
       formData: { name, email, password },
     };
   }
 
   try {
-    // TODO: Implement actual user registration logic here
-    // For now, simulate registration
-    console.log("Sign up attempt:", { name, email, password });
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: await bcrypt.hash(password, 10),
+      },
+    });
 
-    // Simulate success - replace with actual auth logic
     return { success: "Account created successfully! Please sign in." };
   } catch (error) {
     console.error("Sign up error:", error);
