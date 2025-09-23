@@ -13,7 +13,6 @@
 # testing
 /coverage
 /seed
-/app/api/users/*
 # next.js
 /.next/
 /out/
