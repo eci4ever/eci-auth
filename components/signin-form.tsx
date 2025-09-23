@@ -27,8 +27,6 @@ export function SignInForm() {
     }, [state.success]);
 
     const handleGoogleSignIn = async () => {
-        // Handle Google OAuth here
-        // console.log("Google sign in clicked")
         await signIn("google", { callbackUrl: "/dashboard" })
     }
 

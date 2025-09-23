@@ -15,8 +15,7 @@ export function SignUpForm() {
     const [state, formAction, isPending] = useActionState(signUpAction, {}, undefined)
 
     const handleGoogleSignUp = () => {
-        // Handle Google OAuth here
-        console.log("Google sign up clicked")
+
     }
 
     return (

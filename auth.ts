@@ -4,6 +4,7 @@ import { prisma } from "@/prisma";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { getUser } from "./lib/data";
+import { use } from "react";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -17,18 +18,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
     Credentials({
       credentials: {
-        email: {},
-        password: {},
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials) => {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email and password are required");
-        }
-        const user = await getUser(credentials.email as string);
+      async authorize(credentials) {
+        const email = credentials.email as string;
 
-        return {
-          id: user?.id,
-        };
+        const user = await prisma.user.findUnique({
+          where: {
+            email: email.toLowerCase().trim(), // case insensitive
+          },
+          select: {
+            id: true, // hanya select id untuk efficiency
+            email: true,
+            name: true,
+          },
+        });
+        {
+          return {
+            id: user?.id,
+            name: user?.name,
+            email: user?.email,
+          };
+        }
+
+        // kalau gagal
+        return null;
       },
     }),
   ],

@@ -3,7 +3,7 @@
 import { signUpSchema, signInSchema } from "./validations";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/prisma";
-import { signIn } from "@/auth";
+import { auth, signIn } from "@/auth";
 
 export interface AuthState {
   error?: string;
@@ -70,7 +70,7 @@ export async function signInAction(
     });
     return { success: "Signed in successfully!" };
   } catch (error) {
-    console.log("Sign in error:", error);
+    console.error("Sign in error:", error);
     return {
       error: "An error occurred during sign in",
       formData: { email, password },
@@ -128,4 +128,67 @@ export async function signUpAction(
       formData: { name, email, password },
     };
   }
+}
+
+export async function getCurrentUser() {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.email) {
+      return null;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+
+        // tambahkan field lain yang diperlukan
+      },
+    });
+
+    const { roles, permissions } = await getUserRolesAndPermissions(
+      user?.email as string
+    );
+
+    if (user) {
+      return { ...user, roles, permissions };
+    }
+    return user;
+  } catch (error) {
+    console.error("Failed to get current user:", error);
+    return null;
+  }
+}
+
+export async function getUserRolesAndPermissions(email: string) {
+  const user = await prisma.user.findUnique({
+    where: { email: email },
+    include: {
+      roles: {
+        include: {
+          role: {
+            include: {
+              permissions: {
+                include: {
+                  permission: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!user) return { roles: [], permissions: [] };
+
+  const roles = user.roles.map((r) => r.role.name);
+  const permissions = user.roles.flatMap((r) =>
+    r.role.permissions.map((p) => p.permission.name)
+  );
+
+  return { roles, permissions };
 }

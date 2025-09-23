@@ -43,9 +43,7 @@ export function NavUser({
   const { isMobile } = useSidebar()
 
   const handleSignOut = () => {
-    // Handle sign out logic here
     signOut({ callbackUrl: "/" });
-    console.log("Sign out clicked")
   }
 
   return (

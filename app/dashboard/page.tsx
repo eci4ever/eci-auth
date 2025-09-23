@@ -1,4 +1,3 @@
-"use client"
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -14,10 +13,13 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { getCurrentUser } from "@/lib/auth-actions"
 import { Suspense } from "react"
 
+export default async function Page() {
 
-export default function Page() {
+  const user = await getCurrentUser();
+
   return (
     <SidebarProvider>
       <AppSidebar />
