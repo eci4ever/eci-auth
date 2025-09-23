@@ -44,6 +44,8 @@ export function NavUser({
 
   const { data: session } = useSession()
 
+  console.log(user1);
+
   const user = session?.user
 
   const handleSignOut = () => {
