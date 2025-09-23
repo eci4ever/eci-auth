@@ -144,8 +144,7 @@ export async function getCurrentUser() {
         id: true,
         name: true,
         email: true,
-
-        // tambahkan field lain yang diperlukan
+        image: true,
       },
     });
 

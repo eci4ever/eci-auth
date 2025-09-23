@@ -22,7 +22,7 @@ export default async function Page() {
 
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar user={user} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2">
           <div className="flex items-center gap-2 px-4">
@@ -41,7 +41,7 @@ export default async function Page() {
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
                   <Suspense>
-                    <BreadcrumbPage>Welcome
+                    <BreadcrumbPage>Welcome {user?.name}
                     </BreadcrumbPage>
                   </Suspense>
                 </BreadcrumbItem>

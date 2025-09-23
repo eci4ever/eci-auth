@@ -28,6 +28,16 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
+type User = {
+  name?: string | null
+  email?: string | null
+  image?: string | null
+}
+
+type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  user?: User | null
+}
+
 const data = {
   user: {
     name: "shadcn",
@@ -152,7 +162,7 @@ const data = {
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ user, ...props }: AppSidebarProps) {
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -178,7 +188,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{
+          name: user?.name ?? "Guest",
+          email: user?.email ?? "guest@example.com",
+          image: user?.image ?? "",
+        }} />
       </SidebarFooter>
     </Sidebar>
   )
