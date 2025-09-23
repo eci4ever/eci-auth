@@ -1,6 +1,5 @@
 "use client"
 import { AppSidebar } from "@/components/app-sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,6 +16,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useSession } from "next-auth/react"
 import { Suspense } from "react"
+
 
 export default function Page() {
 

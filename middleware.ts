@@ -6,11 +6,12 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Check cookie token (dari NextAuth / custom auth)
+
   const token =
     req.cookies.get("authjs.session-token")?.value ||
     req.cookies.get("__Secure-authjs.session-token")?.value;
   // Protect /dashboard routes
-  if (!token && pathname.startsWith("/dashboard")) {
+  if (!token) {
     return NextResponse.redirect(new URL("/signin", req.url));
   }
 
@@ -18,5 +19,8 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"], // Apply hanya untuk /dashboard
+  matcher: [
+    "/api/users/:path*", // protect API users
+    "/dashboard/:path*", // protect dashboard
+  ],
 };
