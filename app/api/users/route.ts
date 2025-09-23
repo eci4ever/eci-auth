@@ -1,43 +1,46 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/prisma";
 
-export async function GET() {
+type Params = { id: string };
+
+export async function GET(req: Request, { params }: { params: Params }) {
   try {
-    const users = await prisma.user.findMany({
+    const user = await prisma.user.findUnique({
+      where: { id: params.id },
       include: {
         roles: {
           include: {
             role: {
-              include: {
-                permissions: {
-                  include: { permission: true },
-                },
-              },
+              include: { permissions: { include: { permission: true } } },
             },
           },
         },
       },
     });
 
-    const data = users.map((u) => ({
-      id: u.id,
-      email: u.email,
-      name: u.name,
-      roles: u.roles.map((r) => r.role.name),
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const data = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      roles: user.roles.map((r) => r.role.name),
       permissions: [
         ...new Set(
-          u.roles.flatMap((r) =>
+          user.roles.flatMap((r) =>
             r.role.permissions.map((rp) => rp.permission.name)
           )
         ),
       ],
-    }));
+    };
 
     return NextResponse.json(data);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Failed to fetch users" },
+      { error: "Failed to fetch user" },
       { status: 500 }
     );
   }
