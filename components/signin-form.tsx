@@ -166,7 +166,7 @@ export function SignInForm() {
             </Card>
 
             {/* Footer */}
-            <div className="text-center text-xs text-muted-foreground space-x-4">
+            {/* <div className="text-center text-xs text-muted-foreground space-x-4">
                 <Link href="/privacy" className="hover:underline">
                     Privacy Policy
                 </Link>
@@ -174,7 +174,7 @@ export function SignInForm() {
                 <Link href="/terms" className="hover:underline">
                     Terms of Service
                 </Link>
-            </div>
+            </div> */}
         </div>
     )
 }

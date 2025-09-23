@@ -1,5 +1,6 @@
 "use client"
 import { AppSidebar } from "@/components/app-sidebar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -42,7 +43,8 @@ export default function Page() {
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
                   <Suspense>
-                    <BreadcrumbPage>Welcome {session?.user?.email}</BreadcrumbPage>
+                    <BreadcrumbPage>Welcome {session?.user?.email}
+                    </BreadcrumbPage>
                   </Suspense>
                 </BreadcrumbItem>
               </BreadcrumbList>
