@@ -16,6 +16,8 @@ import {
 import { getCurrentUser } from "@/lib/auth-actions"
 import { Suspense } from "react"
 
+export const dynamic = "force-dynamic"
+
 export default async function Page() {
 
   const user = await getCurrentUser();
