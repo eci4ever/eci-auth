@@ -7,7 +7,7 @@
 ## 🚀 Features
 
 - ✅ **User Registration & Login** with secure password hashing
-- 🔄 **Session Management** using JWT or NextAuth (optional)
+- 🔄 **Session Management** using NextAuth
 - 🔒 **Role-based Access Control** (RBAC) ready
 - 📦 **Prisma ORM** for type-safe database queries
 - 🗄️ **PostgreSQL** as the primary relational database
