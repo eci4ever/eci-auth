@@ -14,14 +14,10 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { useSession } from "next-auth/react"
 import { Suspense } from "react"
 
 
 export default function Page() {
-
-  const { data: session } = useSession()
-
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -43,7 +39,7 @@ export default function Page() {
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
                   <Suspense>
-                    <BreadcrumbPage>Welcome {session?.user?.name}
+                    <BreadcrumbPage>Welcome
                     </BreadcrumbPage>
                   </Suspense>
                 </BreadcrumbItem>
