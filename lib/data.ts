@@ -32,7 +32,7 @@ export async function getAllUsers() {
             },
           },
         },
-        profile: false, // kalau ada Profile
+        // profile: false, // kalau ada Profile
       },
     });
 

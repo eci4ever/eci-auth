@@ -128,7 +128,7 @@ export const columns: ColumnDef<User>[] = [
         header: "Status",
         cell: ({ row }) => (
             <Badge variant={row.getValue("status") === true ? "default" : "secondary"}>
-                {row.getValue("status") == true ? "Active" : "Inactive"}</Badge>
+                {row.getValue("status") == true ? "active" : "inactive"}</Badge>
             // <div className="capitalize">{row.getValue("status")}</div>
         ),
     },
