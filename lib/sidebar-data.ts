@@ -97,27 +97,27 @@ export const sidebarData = {
       url: "#",
       isActive: true,
       icon: Settings2,
-      requiredRoles: ["admin"],
+      requiredRoles: ["admin:user"],
       items: [
         {
           title: "Users",
           url: "/dashboard/users",
-          requiredRoles: ["admin"],
+          requiredRoles: ["admin:user"],
         },
         {
           title: "Roles",
           url: "#",
-          requiredRoles: ["admin"],
+          requiredRoles: ["admin:user"],
         },
         {
           title: "Permissions",
           url: "#",
-          requiredRoles: ["admin"],
+          requiredRoles: ["admin:user"],
         },
         {
           title: "Profile",
           url: "#",
-          requiredRoles: ["admin"],
+          requiredRoles: ["admin:user"],
         },
       ],
     },
