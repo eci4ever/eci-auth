@@ -1,12 +1,13 @@
+"use client"
 import { AppSidebar } from "@/components/app-sidebar"
-// import {
-//   Breadcrumb,
-//   BreadcrumbItem,
-//   BreadcrumbLink,
-//   BreadcrumbList,
-//   BreadcrumbPage,
-//   BreadcrumbSeparator,
-// } from "@/components/ui/breadcrumb"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
@@ -14,13 +15,27 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { getCurrentUser } from "@/lib/auth-actions"
-// import { Suspense } from "react"
+import { useEffect, useState } from "react";
+import { Suspense } from "react"
 
 // export const dynamic = "force-dynamic"
 
-export default async function Page() {
+export default function Page() {
 
-  const user = await getCurrentUser();
+  const [user, setUser] = useState<{
+    roles: string[];
+    permissions: string[];
+    name: string | null;
+    id: string;
+    email: string;
+    image: string | null;
+  } | null>(null);
+
+  useEffect(() => {
+    getCurrentUser().then(setUser);
+  }, []);
+
+  // const user = await getCurrentUser();
 
   return (
     <SidebarProvider>
@@ -33,7 +48,7 @@ export default async function Page() {
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
-            {/* <Breadcrumb>
+            <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbLink href="#">
@@ -48,7 +63,7 @@ export default async function Page() {
                   </Suspense>
                 </BreadcrumbItem>
               </BreadcrumbList>
-            </Breadcrumb> */}
+            </Breadcrumb>
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
