@@ -44,7 +44,7 @@ export default function DashboardLayout({
                                     <BreadcrumbSeparator className="hidden md:block" />
                                     <BreadcrumbItem>
                                         <Suspense>
-                                            <BreadcrumbPage>Welcome {user?.name} You are {user?.roles[0].toLocaleUpperCase()}
+                                            <BreadcrumbPage>Welcome {user?.name} You are {user?.roles[0]}
                                             </BreadcrumbPage>
                                         </Suspense>
                                     </BreadcrumbItem>
