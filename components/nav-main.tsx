@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { ChevronRight, LucideIcon } from "lucide-react"
 
 import {
   Collapsible,
@@ -29,7 +29,7 @@ type SubNavItem = {
 type NavItem = {
   title: string
   url: string
-  icon: any
+  icon: LucideIcon
   isActive?: boolean
   requiredRoles?: string[] // ✅ tambahan
   items?: SubNavItem[]
