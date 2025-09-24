@@ -14,15 +14,31 @@ model User {
   password String?
   emailVerified DateTime?
   image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt DateTime?
+  lastLogin DateTime?
+  isActive      Boolean   @default(true)
+  isBan Boolean @default(false)
   roles    UserRole[]
   sessions Session[]
   accounts Account[]
+  profile   Profile?   @relation(fields: [profileId], references: [id])
+  profileId String?   @unique
+}
+
+model Profile {
+  id  String @id @default(cuid())
+  position String
+  address String?
+  user User?
 }
 
 model Role {
   id          String           @id @default(cuid())
   name        String           @unique
   description String?
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
   users       UserRole[]
   permissions RolePermission[]
 }
@@ -31,12 +47,14 @@ model Permission {
   id          String           @id @default(cuid())
   name        String           @unique
   description String?
+  action      String?   // create, read, update, delete, manage, etc.
+  createdAt   DateTime @default(now())
   roles       RolePermission[]
 }
 
 model UserRole {
   id     String @id @default(cuid())
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
   role   Role   @relation(fields: [roleId], references: [id])
   roleId String
