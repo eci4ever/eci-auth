@@ -47,8 +47,9 @@ export async function getAllUsers() {
         id: user.id,
         email: user.email,
         name: user.name,
+        image: user.image,
         status: user.isActive,
-        lastLogin: user.createdAt,
+        lastLogin: user.lastLogin,
         roles,
         // permissions: [...new Set(permissions)], // remove duplicates
         // profile: user.profile ?? null,

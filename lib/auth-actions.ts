@@ -117,6 +117,11 @@ export async function signUpAction(
         name,
         email,
         password: await bcrypt.hash(password, 10),
+        roles: {
+          create: {
+            role: { connect: { name: "Viewer" } },
+          },
+        },
       },
     });
 

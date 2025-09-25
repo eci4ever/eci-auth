@@ -8,6 +8,8 @@ import { getCurrentUser } from "@/lib/auth-actions";
 import { Separator } from "@radix-ui/react-separator";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic"
+
 export default async function DashboardLayout({
     children,
 }: {

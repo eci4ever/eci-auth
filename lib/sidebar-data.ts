@@ -18,21 +18,50 @@ export const sidebarData = {
   },
   navMain: [
     {
+      title: "Settings",
+      url: "#",
+      isActive: true,
+      icon: Settings2,
+      requiredRoles: ["Admin"],
+      items: [
+        {
+          title: "Users",
+          url: "/dashboard/users",
+          requiredRoles: ["Admin"],
+        },
+        {
+          title: "Roles",
+          url: "#",
+          requiredRoles: ["Admin"],
+        },
+        {
+          title: "Permissions",
+          url: "#",
+          requiredRoles: ["Admin"],
+        },
+        {
+          title: "Profile",
+          url: "#",
+          requiredRoles: ["Admin"],
+        },
+      ],
+    },
+    {
       title: "Playground",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
-      requiredRoles: ["manager"],
+      requiredRoles: ["Admin", "Manager", "User"],
       items: [
         {
           title: "History",
           url: "#",
-          requiredRoles: ["manager"],
+          requiredRoles: ["Admin", "Manager", "User"],
         },
         {
           title: "Starred",
           url: "#",
-          requiredRoles: ["manager"],
+          requiredRoles: ["Admin", "Manager", "User"],
         },
         {
           title: "Settings",
@@ -89,35 +118,6 @@ export const sidebarData = {
           title: "Changelog",
           url: "#",
           requiredRoles: [],
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      isActive: true,
-      icon: Settings2,
-      requiredRoles: ["admin"],
-      items: [
-        {
-          title: "Users",
-          url: "/dashboard/users",
-          requiredRoles: ["admin"],
-        },
-        {
-          title: "Roles",
-          url: "#",
-          requiredRoles: ["admin"],
-        },
-        {
-          title: "Permissions",
-          url: "#",
-          requiredRoles: ["admin"],
-        },
-        {
-          title: "Profile",
-          url: "#",
-          requiredRoles: ["admin"],
         },
       ],
     },

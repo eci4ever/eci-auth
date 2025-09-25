@@ -36,11 +36,13 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Badge } from "./ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 
 export type User = {
     id: string;
     email: string;
-    name: string | null;
+    name: string;
+    image: string;
     status: boolean;
     lastLogin: Date;
     roles: string[];
@@ -69,6 +71,16 @@ export const columns: ColumnDef<User>[] = [
         enableSorting: false,
         enableHiding: false,
     },
+    // {
+    //     accessorKey: "image",
+    //     header: "Image",
+    //     cell: ({ row }) => (
+    //         <Avatar>
+    //             <AvatarImage src={row.getValue("image")} alt={row.getValue("name")} />
+    //             <AvatarFallback>A</AvatarFallback>
+    //         </Avatar>
+    //     ),
+    // },
     {
         accessorKey: "name",
         header: ({ column }) => (
@@ -85,10 +97,16 @@ export const columns: ColumnDef<User>[] = [
         cell: ({ row }) => {
             const user = row.original as User
             return (
-                <div>
-                    <div className="capitalize">{user.name}</div>
-                    <div className="lowercase text-sm text-muted-foreground">
-                        {user.email}
+                <div className="flex items-center gap-3">
+                    <Avatar>
+                        <AvatarImage src={user.image} alt={user.name} />
+                        <AvatarFallback>{user?.name.charAt(0).toUpperCase() ?? "U"}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <div className="capitalize">{user.name}</div>
+                        <div className="lowercase text-sm text-muted-foreground">
+                            {user.email}
+                        </div>
                     </div>
                 </div>
             )
@@ -106,16 +124,16 @@ export const columns: ColumnDef<User>[] = [
                         <Badge
                             key={i}
                             variant={
-                                role === "admin"
+                                role === "Admin"
                                     ? "default"
                                     : role === "Moderator"
                                         ? "secondary"
                                         : "outline"
                             }
                         >
-                            {role === "admin" && <Crown className="h-3 w-3 mr-1" />}
+                            {role === "Admin" && <Crown className="h-3 w-3 mr-1" />}
                             {role === "Moderator" && <Shield className="h-3 w-3 mr-1" />}
-                            {role === "User" && <User className="h-3 w-3 mr-1" />}
+                            {role === "Viewer" && <User className="h-3 w-3 mr-1" />}
                             {role}
                         </Badge>
                     ))}
@@ -127,8 +145,8 @@ export const columns: ColumnDef<User>[] = [
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => (
-            <Badge variant={row.getValue("status") === true ? "default" : "secondary"}>
-                {row.getValue("status") == true ? "active" : "inactive"}</Badge>
+            <Badge variant={row.getValue("status") === true ? "outline" : "secondary"}>
+                {row.getValue("status") == true ? "Active" : "inactive"}</Badge>
             // <div className="capitalize">{row.getValue("status")}</div>
         ),
     },
@@ -137,6 +155,9 @@ export const columns: ColumnDef<User>[] = [
         header: "Last Login",
         cell: ({ row }) => {
             const raw = row.getValue("lastLogin") as string
+            if (raw === null) {
+                return <div className="text-sm text-muted-foreground">Never Login</div>
+            }
             const date = new Date(raw)
 
             return (
