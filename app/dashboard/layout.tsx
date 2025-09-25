@@ -1,26 +1,20 @@
-"use client"
 import { AppSidebar } from "@/components/app-sidebar";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
+import {
+    Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList,
+    BreadcrumbPage, BreadcrumbSeparator
+} from "@/components/ui/breadcrumb";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { getCurrentUser } from "@/lib/auth-actions";
-import { UserRole } from "@/lib/definition";
-import { Suspense, useEffect, useState } from "react";
+import { Separator } from "@radix-ui/react-separator";
+import { Suspense } from "react";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
     children,
-}: Readonly<{
+}: {
     children: React.ReactNode;
-}>) {
+}) {
 
-    const [user, setUser] = useState<UserRole | null>(null);
-
-    useEffect(() => {
-        const fecthUser = async () => {
-            getCurrentUser().then(setUser);
-        }
-        fecthUser()
-    }, []);
+    const user = await getCurrentUser()
 
     return (
         <div>
@@ -55,7 +49,6 @@ export default function DashboardLayout({
                     {children}
                 </SidebarInset>
             </SidebarProvider>
-
         </div>
     );
 }
