@@ -42,9 +42,9 @@ export type User = {
     id: string;
     email: string;
     name: string;
-    image: string;
+    image: string | null;
     status: boolean;
-    lastLogin: Date;
+    lastLogin: Date | null;
     roles: string[];
 }
 
@@ -95,22 +95,28 @@ export const columns: ColumnDef<User>[] = [
             </Button>
         ),
         cell: ({ row }) => {
-            const user = row.original as User
+            const user = row.original
             return (
                 <div className="flex items-center gap-3">
                     <Avatar>
-                        <AvatarImage src={user.image} alt={user.name} />
-                        <AvatarFallback>{user?.name.charAt(0).toUpperCase() ?? "U"}</AvatarFallback>
+                        {user.image ? (
+                            <AvatarImage src={user.image} alt={user.name ?? "User"} />
+                        ) : (
+                            <AvatarFallback>
+                                {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                            </AvatarFallback>
+                        )}
                     </Avatar>
                     <div>
-                        <div className="capitalize">{user.name}</div>
+                        <div className="capitalize">{user.name ?? "No Name"}</div>
                         <div className="lowercase text-sm text-muted-foreground">
-                            {user.email}
+                            {user.email ?? "No Email"}
                         </div>
                     </div>
                 </div>
             )
         },
+
     },
     {
         accessorKey: "roles",

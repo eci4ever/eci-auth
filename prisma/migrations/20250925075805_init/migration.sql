@@ -2,7 +2,7 @@
 CREATE TABLE "public"."User" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "name" TEXT,
+    "name" TEXT NOT NULL,
     "password" TEXT,
     "emailVerified" TIMESTAMP(3),
     "image" TEXT,
