@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { verifyEmail } from "@/lib/auth-actions"
 
-export default async function VerifyEmailPage({ searchParams }: { searchParams: { token?: string; email?: string } }) {
-    const token = searchParams?.token ?? ""
-    const email = searchParams?.email ?? ""
+export default async function VerifyEmailPage({ searchParams }: { searchParams: Promise<{ token?: string; email?: string }> }) {
+    const params = await searchParams
+    const token = params?.token ?? ""
+    const email = params?.email ?? ""
 
     let ok = false
     if (token && email) {
