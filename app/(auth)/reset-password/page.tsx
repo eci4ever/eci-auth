@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { AlertCircle, CheckCircle } from "lucide-react"
 import { requestPasswordReset, resetPassword } from "@/lib/auth-actions"
+import Link from "next/link"
 
 export default function ResetPasswordPage() {
     const searchParams = useSearchParams()
@@ -54,9 +55,18 @@ export default function ResetPasswordPage() {
                                 )}
                                 <div className="space-y-2">
                                     <Label htmlFor="email">Email Address</Label>
-                                    <Input id="email" name="email" type="email" inputMode="email" autoComplete="email" placeholder="Enter your email" required disabled={requesting} />
+                                    <Input id="email" name="email" type="email" inputMode="email" autoComplete="email" placeholder="Enter your email"
+                                        required
+                                        disabled={resetting} aria-disabled={resetting}
+                                    />
                                 </div>
-                                <Button type="submit" className="w-full" disabled={requesting}>Send reset link</Button>
+                                <Button type="submit" className="w-full" disabled={requesting} aria-disabled={requesting}>Send reset link</Button>
+                                <div className="text-center text-sm text-muted-foreground">
+                                    Back to {" "}
+                                    <Link href="/signin" className="text-primary hover:underline">
+                                        Login
+                                    </Link>
+                                </div>
                             </form>
                         ) : (
                             <form action={resetAction} className="space-y-4">
@@ -76,9 +86,12 @@ export default function ResetPasswordPage() {
                                 <input type="hidden" name="email" value={emailFromLink} />
                                 <div className="space-y-2">
                                     <Label htmlFor="password">New Password for {emailFromLink}</Label>
-                                    <Input id="password" name="password" type="password" autoComplete="new-password" placeholder="Create a new password" required />
+                                    <Input id="password" name="password" type="password" autoComplete="new-password" placeholder="Create a new password"
+                                        required
+                                        disabled={resetting} aria-disabled={resetting}
+                                    />
                                 </div>
-                                <Button type="submit" className="w-full" disabled={resetting}>Reset password</Button>
+                                <Button type="submit" className="w-full" disabled={resetting} aria-disabled={resetting}>Reset password</Button>
                             </form>
                         )}
                     </CardContent>
