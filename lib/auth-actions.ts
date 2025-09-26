@@ -1,6 +1,11 @@
 "use server";
 
-import { signUpSchema, signInSchema, emailOnlySchema, resetPasswordSchema } from "./validations";
+import {
+  signUpSchema,
+  signInSchema,
+  emailOnlySchema,
+  resetPasswordSchema,
+} from "./validations";
 import { sendVerificationEmail, sendPasswordResetEmail } from "@/lib/email";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/prisma";
@@ -199,8 +204,8 @@ export async function getCurrentUser() {
       r.role.permissions.map((p) => p.permission.name)
     );
 
-    const { id, name, email, image } = userWithRelations;
-    return { id, name, email, image, roles, permissions };
+    const { id, name, email, image, emailVerified } = userWithRelations;
+    return { id, name, email, image, emailVerified, roles, permissions };
   } catch (error) {
     console.error("Failed to get current user:", error);
     return null;
@@ -249,17 +254,24 @@ function createRandomToken(length = 48): string {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-export async function requestEmailVerification(prev: AuthState, formData: FormData): Promise<AuthState> {
+export async function requestEmailVerification(
+  prev: AuthState,
+  formData: FormData
+): Promise<AuthState> {
   const email = (formData.get("email") as string) ?? "";
   const parsed = emailOnlySchema.safeParse({ email });
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message, formData: { email } };
   }
   const normalizedEmail = email.toLowerCase().trim();
-  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  });
   if (!user) {
     // Jangan dedahkan kewujudan akaun
-    return { success: "If the email exists, a verification link has been sent." };
+    return {
+      success: "If the email exists, a verification link has been sent.",
+    };
   }
   const token = createRandomToken(24);
   const expires = new Date(Date.now() + 1000 * 60 * 60); // 1 jam
@@ -275,11 +287,18 @@ export async function requestEmailVerification(prev: AuthState, formData: FormDa
   if (process.env.NODE_ENV !== "production") {
     console.log("[DEV] Verify URL:", verifyUrl);
   }
-  try { await sendVerificationEmail(normalizedEmail, verifyUrl); } catch (e) { console.error("sendVerificationEmail failed", e); }
+  try {
+    await sendVerificationEmail(normalizedEmail, verifyUrl);
+  } catch (e) {
+    console.error("sendVerificationEmail failed", e);
+  }
   return { success: "Verification link sent to your email." };
 }
 
-export async function verifyEmail(token: string, email: string): Promise<boolean> {
+export async function verifyEmail(
+  token: string,
+  email: string
+): Promise<boolean> {
   const normalizedEmail = email.toLowerCase().trim();
   const record = await prisma.verificationToken.findUnique({
     where: { identifier_token: { identifier: normalizedEmail, token } },
@@ -288,20 +307,30 @@ export async function verifyEmail(token: string, email: string): Promise<boolean
     return false;
   }
   await prisma.$transaction([
-    prisma.user.update({ where: { email: normalizedEmail }, data: { emailVerified: new Date() } }),
-    prisma.verificationToken.delete({ where: { identifier_token: { identifier: normalizedEmail, token } } }),
+    prisma.user.update({
+      where: { email: normalizedEmail },
+      data: { emailVerified: new Date() },
+    }),
+    prisma.verificationToken.delete({
+      where: { identifier_token: { identifier: normalizedEmail, token } },
+    }),
   ]);
   return true;
 }
 
-export async function requestPasswordReset(prev: AuthState, formData: FormData): Promise<AuthState> {
+export async function requestPasswordReset(
+  prev: AuthState,
+  formData: FormData
+): Promise<AuthState> {
   const email = (formData.get("email") as string) ?? "";
   const parsed = emailOnlySchema.safeParse({ email });
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message, formData: { email } };
   }
   const normalizedEmail = email.toLowerCase().trim();
-  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  });
   if (!user) {
     return { success: "If the email exists, a reset link has been sent." };
   }
@@ -317,11 +346,18 @@ export async function requestPasswordReset(prev: AuthState, formData: FormData):
   if (process.env.NODE_ENV !== "production") {
     console.log("[DEV] Reset URL:", resetUrl);
   }
-  try { await sendPasswordResetEmail(normalizedEmail, resetUrl); } catch (e) { console.error("sendPasswordResetEmail failed", e); }
+  try {
+    await sendPasswordResetEmail(normalizedEmail, resetUrl);
+  } catch (e) {
+    console.error("sendPasswordResetEmail failed", e);
+  }
   return { success: "Password reset link sent if the email exists." };
 }
 
-export async function resetPassword(prev: AuthState, formData: FormData): Promise<AuthState> {
+export async function resetPassword(
+  prev: AuthState,
+  formData: FormData
+): Promise<AuthState> {
   const email = (formData.get("email") as string) ?? "";
   const token = (formData.get("token") as string) ?? "";
   const password = (formData.get("password") as string) ?? "";
@@ -337,8 +373,13 @@ export async function resetPassword(prev: AuthState, formData: FormData): Promis
     return { error: "Invalid or expired token" };
   }
   await prisma.$transaction([
-    prisma.user.update({ where: { email: normalizedEmail }, data: { password: await bcrypt.hash(password, 10) } }),
-    prisma.verificationToken.delete({ where: { identifier_token: { identifier: normalizedEmail, token } } }),
+    prisma.user.update({
+      where: { email: normalizedEmail },
+      data: { password: await bcrypt.hash(password, 10) },
+    }),
+    prisma.verificationToken.delete({
+      where: { identifier_token: { identifier: normalizedEmail, token } },
+    }),
   ]);
   return { success: "Password has been reset. You can now sign in." };
 }

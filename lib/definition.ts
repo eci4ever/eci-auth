@@ -5,4 +5,5 @@ export type UserRole = {
   id: string;
   email: string;
   image: string | null;
+  emailVerified: Date | null;
 };

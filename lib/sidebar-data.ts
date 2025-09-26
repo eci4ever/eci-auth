@@ -7,7 +7,6 @@ import {
   PieChart,
   Send,
   Settings2,
-  SquareTerminal,
 } from "lucide-react";
 
 export const sidebarData = {
@@ -19,7 +18,7 @@ export const sidebarData = {
   navMain: [
     {
       title: "Settings",
-      url: "#",
+      url: "/dashboard/users/stats",
       isActive: true,
       icon: Settings2,
       requiredRoles: ["Admin"],
@@ -39,34 +38,39 @@ export const sidebarData = {
           url: "#",
           requiredRoles: ["Admin"],
         },
-        {
-          title: "Profile",
-          url: "#",
-          requiredRoles: ["Admin"],
-        },
       ],
     },
     {
-      title: "Playground",
+      title: "Sales & Marketing",
       url: "#",
-      icon: SquareTerminal,
+      icon: PieChart,
       isActive: true,
       requiredRoles: ["Admin", "Manager", "User"],
       items: [
         {
-          title: "History",
+          title: "Invoices",
           url: "#",
           requiredRoles: ["Admin", "Manager", "User"],
         },
         {
-          title: "Starred",
+          title: "Customers",
           url: "#",
           requiredRoles: ["Admin", "Manager", "User"],
         },
         {
-          title: "Settings",
+          title: "Quotations",
           url: "#",
-          requiredRoles: ["manager"],
+          requiredRoles: ["Admin", "Manager", "User"],
+        },
+        {
+          title: "Revenue",
+          url: "#",
+          requiredRoles: ["Admin", "Manager", "User"],
+        },
+        {
+          title: "Payments",
+          url: "#",
+          requiredRoles: ["Admin", "Manager", "User"],
         },
       ],
     },
