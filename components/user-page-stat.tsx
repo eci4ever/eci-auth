@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, PieChart, Cell, Pie, Legend } from "recharts"
+import { Area, AreaChart, XAxis, YAxis, CartesianGrid, PieChart, Cell, Pie, Legend } from "recharts"
 import {
     Users,
     Shield,
@@ -80,21 +80,6 @@ const users = [
     },
 ]
 
-const roles = [
-    { id: 1, name: "Super Admin", users: 3, permissions: 25, description: "Full system access and control" },
-    { id: 2, name: "Admin", users: 12, permissions: 18, description: "Administrative privileges with user management" },
-    { id: 3, name: "Moderator", users: 45, permissions: 8, description: "Content moderation and basic user support" },
-    { id: 4, name: "User", users: 1850, permissions: 3, description: "Standard user access with basic features" },
-]
-
-const permissions = [
-    { id: 1, name: "User Management", description: "Create, edit, and delete user accounts", category: "Users" },
-    { id: 2, name: "Role Assignment", description: "Assign and modify user roles", category: "Users" },
-    { id: 3, name: "Content Moderation", description: "Review and moderate user-generated content", category: "Content" },
-    { id: 4, name: "System Settings", description: "Access and modify system configuration", category: "System" },
-    { id: 5, name: "Analytics Access", description: "View system analytics and reports", category: "Analytics" },
-    { id: 6, name: "Billing Management", description: "Manage billing and subscription settings", category: "Billing" },
-]
 
 export default function UserManagementDashboard() {
     const [searchTerm, setSearchTerm] = useState("")

@@ -5,7 +5,6 @@ import {
     BreadcrumbPage, BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
 import { requestEmailVerification } from "@/lib/auth-actions";
-import { User } from "@prisma/client";
 import { useActionState } from "react";
 import { Button } from "./ui/button";
 import { UserRole } from "@/lib/definition";
