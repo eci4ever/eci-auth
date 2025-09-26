@@ -32,6 +32,7 @@ export function SignInForm() {
         try {
             await signIn("google", { callbackUrl: "/dashboard" })
         } catch (e) {
+            console.error("Google sign in error:", e);
             // noop: NextAuth signIn akan redirect; jika gagal, kekal di halaman
         }
     }

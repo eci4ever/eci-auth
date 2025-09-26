@@ -53,22 +53,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) {
-          const failedLoginAttempts =
-            ((user as User)?.failedLoginAttempts as number | undefined) ?? 0;
-          const newAttempts = failedLoginAttempts + 1;
-          const shouldLock = newAttempts >= 5; // threshold
-          const updateData: any = {};
-          // Only attempt to update if the schema has these fields
-          updateData.failedLoginAttempts = shouldLock ? 0 : newAttempts;
-          updateData.lockUntil = shouldLock
-            ? new Date(Date.now() + 15 * 60 * 1000)
-            : null;
-          try {
-            await prisma.user.update({
-              where: { id: user.id },
-              data: updateData,
-            } as any);
-          } catch {}
+        const failedLoginAttempts = (user as any)?.failedLoginAttempts ?? 0;
+        const newAttempts = failedLoginAttempts + 1;
+        const shouldLock = newAttempts >= 5; // threshold
+        const updateData: { failedLoginAttempts?: number; lockUntil?: Date | null } = {};
+        // Only attempt to update if the schema has these fields
+        updateData.failedLoginAttempts = shouldLock ? 0 : newAttempts;
+        updateData.lockUntil = shouldLock
+          ? new Date(Date.now() + 15 * 60 * 1000)
+          : null;
+        try {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: updateData,
+          });
+        } catch {}
           return null;
         }
 
@@ -76,8 +75,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         try {
           await prisma.user.update({
             where: { id: user.id },
-            data: { failedLoginAttempts: 0, lockUntil: null } as any,
-          } as any);
+            data: { failedLoginAttempts: 0, lockUntil: null },
+          });
         } catch {}
 
         return { id: user.id, name: user.name, email: user.email };
@@ -133,8 +132,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      if (token?.userId) (session.user as any).id = token.userId as string;
-      if (token?.roles) (session.user as any).roles = token.roles as string[];
+      if (token?.userId) (session.user as any).id = token.userId;
+      if (token?.roles) (session.user as any).roles = token.roles;
       return session;
     },
     authorized({ auth, request }) {
