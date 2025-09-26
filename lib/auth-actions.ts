@@ -44,6 +44,8 @@ export async function signInAction(
       id: true, // hanya select id untuk efficiency
       email: true,
       password: true,
+      failedLoginAttempts: true,
+      lockUntil: true,
     },
   });
 
@@ -57,7 +59,7 @@ export async function signInAction(
   }
 
   // Check lockout window (if field exists)
-  const lockUntil = (user as any)?.lockUntil as Date | null | undefined;
+  const lockUntil = user.lockUntil;
   if (lockUntil && new Date(lockUntil) > new Date()) {
     return { error: genericError, formData: { email, password } };
   }
@@ -68,7 +70,7 @@ export async function signInAction(
   );
 
   if (!isPasswordValid) {
-    const failedLoginAttempts = ((user as any)?.failedLoginAttempts as number | undefined) ?? 0;
+    const failedLoginAttempts = user.failedLoginAttempts ?? 0;
     const newAttempts = failedLoginAttempts + 1;
     const shouldLock = newAttempts >= 5;
     try {
