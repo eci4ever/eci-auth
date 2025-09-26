@@ -4,6 +4,7 @@ import { prisma } from "@/prisma";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import { User } from "@prisma/client";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -45,7 +46,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         // Check lockout window (if schema already supports it)
-        const lockUntil = (user as any)?.lockUntil as Date | null | undefined;
+        const lockUntil = (user as User)?.lockUntil as Date | null | undefined;
         if (lockUntil && new Date(lockUntil) > new Date()) {
           return null;
         }
@@ -53,7 +54,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) {
           const failedLoginAttempts =
-            ((user as any)?.failedLoginAttempts as number | undefined) ?? 0;
+            ((user as User)?.failedLoginAttempts as number | undefined) ?? 0;
           const newAttempts = failedLoginAttempts + 1;
           const shouldLock = newAttempts >= 5; // threshold
           const updateData: any = {};

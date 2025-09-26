@@ -20,6 +20,7 @@ export function SignUpForm() {
             await signIn("google", { callbackUrl: "/dashboard" })
         } catch (e) {
             // noop
+            console.error(e)
         }
     }
 
