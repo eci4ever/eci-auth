@@ -3,33 +3,30 @@ import { User as PrismaUser } from "@prisma/client";
 
 export async function getUser(email: string): Promise<PrismaUser | null> {
   try {
+    const normalizedEmail = email.toLowerCase().trim();
     const user = await prisma.user.findUnique({
       where: {
-        email: email,
+        email: normalizedEmail,
       },
     });
     return user;
   } catch (error) {
     console.error("Failed to fetch user:", error);
-    throw new Error("Failed to fetch user.");
+    return null;
   }
 }
 
-export async function getAllUsers() {
+export async function getAllUsers(opts?: { take?: number; skip?: number; orderBy?: "name" | "email" | "lastLogin" }) {
+  const { take = 50, skip = 0, orderBy = "name" } = opts ?? {};
   try {
     const users = await prisma.user.findMany({
+      take,
+      skip,
+      orderBy: { [orderBy]: "asc" },
       include: {
         roles: {
           include: {
-            role: {
-              include: {
-                permissions: {
-                  include: {
-                    permission: true,
-                  },
-                },
-              },
-            },
+            role: true,
           },
         },
         // profile: false, // kalau ada Profile
@@ -56,7 +53,7 @@ export async function getAllUsers() {
       };
     });
   } catch (err) {
-    console.error("❌ Error getAllUsers:", err);
+    console.error("Error getAllUsers:", err);
     return [];
   }
 }

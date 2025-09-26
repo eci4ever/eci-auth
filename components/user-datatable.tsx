@@ -139,7 +139,7 @@ export const columns: ColumnDef<User>[] = [
                         >
                             {role === "Admin" && <Crown className="h-3 w-3 mr-1" />}
                             {role === "Moderator" && <Shield className="h-3 w-3 mr-1" />}
-                            {role === "Viewer" && <User className="h-3 w-3 mr-1" />}
+                            {role === "User" && <User className="h-3 w-3 mr-1" />}
                             {role}
                         </Badge>
                     ))}
@@ -250,7 +250,7 @@ export function UserDataTable({ data }: { data: User[] }) {
         <div className="w-full">
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Filter emails..."
+                    placeholder="Filter users..."
                     value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
                         table.getColumn("name")?.setFilterValue(event.target.value)

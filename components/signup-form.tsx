@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useActionState } from "react"
+import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,8 +15,12 @@ export function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false)
     const [state, formAction, isPending] = useActionState(signUpAction, {}, undefined)
 
-    const handleGoogleSignUp = () => {
-
+    const handleGoogleSignUp = async () => {
+        try {
+            await signIn("google", { callbackUrl: "/dashboard" })
+        } catch (e) {
+            // noop
+        }
     }
 
     return (
@@ -91,6 +96,7 @@ export function SignUpForm() {
                                 id="name"
                                 name="name"
                                 type="text"
+                                autoComplete="name"
                                 placeholder="Enter your full name"
                                 required
                                 className="bg-input"
@@ -104,6 +110,8 @@ export function SignUpForm() {
                                 id="email"
                                 name="email"
                                 type="email"
+                                inputMode="email"
+                                autoComplete="email"
                                 placeholder="Enter your email"
                                 required
                                 className="bg-input"
@@ -118,10 +126,10 @@ export function SignUpForm() {
                                     id="password"
                                     name="password"
                                     type={showPassword ? "text" : "password"}
+                                    autoComplete="new-password"
                                     placeholder="Create a password"
                                     required
                                     className="bg-input pr-10"
-                                    defaultValue={state.formData?.password || ""}
                                 />
                                 <Button
                                     type="button"

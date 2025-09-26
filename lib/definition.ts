@@ -1,8 +1,8 @@
 export type UserRole = {
   roles: string[];
   permissions: string[];
-  name: string | null;
+  name: string;
   id: string;
   email: string;
-  image: string | null;
+  image: string;
 };

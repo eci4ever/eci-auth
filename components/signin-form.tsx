@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useActionState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,26 +9,31 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Eye, EyeOff, AlertCircle, CheckCircle, Loader2 } from "lucide-react"
-import { signInAction } from "@/lib/auth-actions"
+import { signInAction, requestEmailVerification } from "@/lib/auth-actions"
 import { signIn } from "next-auth/react";
 
 export function SignInForm() {
     const [showPassword, setShowPassword] = useState(false)
     const [state, formAction, isPending] = useActionState(signInAction, {}, undefined)
+    const router = useRouter()
+    const [resendState, resendAction, isResending] = useActionState(requestEmailVerification, {}, undefined)
 
 
     useEffect(() => {
         if (state.success) {
             const timer = setTimeout(() => {
-                window.location.href = "/dashboard"
-            }, 1500); // tunggu 1.5s sebelum redirect
-
+                router.replace("/dashboard")
+            }, 800);
             return () => clearTimeout(timer);
         }
-    }, [state.success]);
+    }, [state.success, router]);
 
     const handleGoogleSignIn = async () => {
-        await signIn("google", { callbackUrl: "/dashboard" })
+        try {
+            await signIn("google", { callbackUrl: "/dashboard" })
+        } catch (e) {
+            // noop: NextAuth signIn akan redirect; jika gagal, kekal di halaman
+        }
     }
 
     return (
@@ -83,14 +89,14 @@ export function SignInForm() {
                     </div>
 
                     {state.error && (
-                        <div className="flex items-center gap-2 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
+                        <div role="status" aria-live="polite" className="flex items-center gap-2 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
                             <AlertCircle className="h-4 w-4" />
                             {state.error}
                         </div>
                     )}
 
                     {state.success && (
-                        <div className="flex items-center gap-2 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">
+                        <div role="status" aria-live="polite" className="flex items-center gap-2 p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">
                             <CheckCircle className="h-4 w-4" />
                             <span>{state.success}</span>
 
@@ -106,6 +112,8 @@ export function SignInForm() {
                                 id="email"
                                 name="email"
                                 type="email"
+                                inputMode="email"
+                                autoComplete="email"
                                 placeholder="Enter your email"
                                 required
                                 className="bg-input"
@@ -117,7 +125,7 @@ export function SignInForm() {
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <Label htmlFor="password">Password</Label>
-                                <Link href="#" className="text-sm text-primary hover:underline">
+                                <Link href="/reset-password" className="text-sm text-primary hover:underline">
                                     Forgot password?
                                 </Link>
                             </div>
@@ -126,10 +134,10 @@ export function SignInForm() {
                                     id="password"
                                     name="password"
                                     type={showPassword ? "text" : "password"}
+                                    autoComplete="current-password"
                                     placeholder="Enter your password"
                                     required
                                     className="bg-input pr-10"
-                                    defaultValue={state.formData?.password || ""}
                                     disabled={isPending} aria-disabled={isPending}
                                 />
                                 <Button
@@ -138,6 +146,7 @@ export function SignInForm() {
                                     size="sm"
                                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                                     onClick={() => setShowPassword(!showPassword)}
+                                    aria-pressed={showPassword}
                                     aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
                                     {showPassword ? (
@@ -159,6 +168,16 @@ export function SignInForm() {
                         <Link href="/signup" className="text-primary hover:underline">
                             Sign up
                         </Link>
+                    </div>
+                    <div className="pt-2">
+                        <form action={resendAction} className="flex items-center gap-2">
+                            <input type="hidden" name="email" value={state.formData?.email ?? ""} />
+                            <Button type="submit" variant="link" className="px-0" disabled={isResending}>
+                                Resend verification link
+                            </Button>
+                            {resendState?.success && <span className="text-xs text-muted-foreground">{resendState.success}</span>}
+                            {resendState?.error && <span className="text-xs text-destructive">{resendState.error}</span>}
+                        </form>
                     </div>
                 </CardContent>
             </Card>
