@@ -1,10 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import BreadcrumbBar from "@/components/breadcrumb";
-import {
-    Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList,
-    BreadcrumbPage, BreadcrumbSeparator
-} from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { getCurrentUser } from "@/lib/auth-actions";
 import { Separator } from "@radix-ui/react-separator";

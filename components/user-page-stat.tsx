@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Area, AreaChart, XAxis, YAxis, CartesianGrid, PieChart, Cell, Pie, Legend } from "recharts"
@@ -32,67 +31,56 @@ const pieChartData = [
     { name: "Free Users", value: 9800 },
 ];
 
-const users = [
-    {
-        id: 1,
-        name: "Sarah Chen",
-        email: "sarah.chen@company.com",
-        role: "Admin",
-        status: "Active",
-        lastLogin: "2 hours ago",
-        avatar: "/placeholder.svg?height=32&width=32",
-    },
-    {
-        id: 2,
-        name: "Marcus Johnson",
-        email: "marcus.j@company.com",
-        role: "User",
-        status: "Active",
-        lastLogin: "1 day ago",
-        avatar: "/placeholder.svg?height=32&width=32",
-    },
-    {
-        id: 3,
-        name: "Elena Rodriguez",
-        email: "elena.r@company.com",
-        role: "Moderator",
-        status: "Active",
-        lastLogin: "3 hours ago",
-        avatar: "/placeholder.svg?height=32&width=32",
-    },
-    {
-        id: 4,
-        name: "David Kim",
-        email: "david.kim@company.com",
-        role: "User",
-        status: "Inactive",
-        lastLogin: "1 week ago",
-        avatar: "/placeholder.svg?height=32&width=32",
-    },
-    {
-        id: 5,
-        name: "Lisa Wang",
-        email: "lisa.wang@company.com",
-        role: "Admin",
-        status: "Active",
-        lastLogin: "30 minutes ago",
-        avatar: "/placeholder.svg?height=32&width=32",
-    },
-]
+// const users = [
+//     {
+//         id: 1,
+//         name: "Sarah Chen",
+//         email: "sarah.chen@company.com",
+//         role: "Admin",
+//         status: "Active",
+//         lastLogin: "2 hours ago",
+//         avatar: "/placeholder.svg?height=32&width=32",
+//     },
+//     {
+//         id: 2,
+//         name: "Marcus Johnson",
+//         email: "marcus.j@company.com",
+//         role: "User",
+//         status: "Active",
+//         lastLogin: "1 day ago",
+//         avatar: "/placeholder.svg?height=32&width=32",
+//     },
+//     {
+//         id: 3,
+//         name: "Elena Rodriguez",
+//         email: "elena.r@company.com",
+//         role: "Moderator",
+//         status: "Active",
+//         lastLogin: "3 hours ago",
+//         avatar: "/placeholder.svg?height=32&width=32",
+//     },
+//     {
+//         id: 4,
+//         name: "David Kim",
+//         email: "david.kim@company.com",
+//         role: "User",
+//         status: "Inactive",
+//         lastLogin: "1 week ago",
+//         avatar: "/placeholder.svg?height=32&width=32",
+//     },
+//     {
+//         id: 5,
+//         name: "Lisa Wang",
+//         email: "lisa.wang@company.com",
+//         role: "Admin",
+//         status: "Active",
+//         lastLogin: "30 minutes ago",
+//         avatar: "/placeholder.svg?height=32&width=32",
+//     },
+// ]
 
 
 export default function UserManagementDashboard() {
-    const [searchTerm, setSearchTerm] = useState("")
-    const [roleFilter, setRoleFilter] = useState("all")
-
-    const filteredUsers = users.filter((user) => {
-        const matchesSearch =
-            user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase())
-        const matchesRole = roleFilter === "all" || user.role.toLowerCase() === roleFilter.toLowerCase()
-        return matchesSearch && matchesRole
-    })
-
     return (
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
             {/* Stats Cards */}

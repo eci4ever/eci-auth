@@ -37,9 +37,11 @@ export default function BreadcrumbBar({ user }: { user: UserRole | null }) {
 
                                 <form action={resendAction} className="flex items-center">
                                     <input type="hidden" name="email" value={user?.email} />
-                                    <Button type="submit" variant="outline" className="px-2 mx-2">
+                                    <Button type="submit" variant="outline" className="px-2 mx-2" disabled={isResending}>
                                         Verify Email
                                     </Button>
+                                    {resendState?.success && <span className="text-xs text-muted-foreground">{resendState.success}</span>}
+                                    {resendState?.error && <span className="text-xs text-destructive">{resendState.error}</span>}
                                 </form> : null}
                         </div>
                     </BreadcrumbPage>
